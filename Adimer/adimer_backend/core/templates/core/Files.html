@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% block content %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <!--<th>#</th>-->
+                <th>File name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in list %}
+                <tr>
+                    <!--<td>{{ file.pk }}</td>-->
+                    <td>{{ file.get_file_name }}</td>
+                    <td>
+                        <button type="button" data-pk={{ file.pk }} class="file_delete btn btn-danger fa fa-trash" aria-hidden="true"></button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block modalTitle %}Add file{% endblock %}
+{% block modalDeleteTitle %}Delete file{% endblock %}
+{% block id %}file_add{% endblock %}
+{% block js %}
+    <script>
+        var formAjaxSubmit = function(form, modal) {
+            $(form).submit(function (e) {
+                e.preventDefault();
+                var data = new FormData($('form').get(0));
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: data,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (xhr, ajaxOptions, thrownError) {
+                        if ( $(xhr).find('.has-error').length > 0 ) {
+                            $(modal).find('.modal-body').html(xhr);
+                            formAjaxSubmit(form, modal);
+                        } else {
+                            $(modal).modal('toggle');
+                            setTimeout(function(){
+                                window.location.reload();
+                            }, 100);
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                    }
+                });
+            });
+        };
+
+        $('#file_add').click(function() {
+            $('#form-modal-body').load('/core/upload/', function () {
+                $('#form-modal').modal('toggle');
+                formAjaxSubmit('#form-modal-body form', '#form-modal');
+            });
+        });
+
+        $('.file2_remove').click(function() {
+            var pk = $(this).attr("data-pk");
+            $.ajax({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+                type: 'DELETE',
+                url: '/core/delete-file/' + pk,
+                success: function (xhr, ajaxOptions, thrownError) {},
+                error: function (xhr, ajaxOptions, thrownError) {}
+            });
+        });
+
+        $('.file_delete').click(function() {
+            var pk = $(this).attr("data-pk");
+            $('#form-modal-delete-body').load('/core/delete-file/'+ pk, function () {
+                $('#form-modal-delete').modal('toggle');
+                formAjaxSubmit('#form-modal-delete-body form', '#form-modal-delete');
+            });
+        });
+    </script>
+{% endblock js %}

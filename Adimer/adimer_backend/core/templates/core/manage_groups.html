@@ -1,0 +1,103 @@
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        li:hover {
+            cursor:pointer;
+        }
+        span {
+            display: none;
+            position: relative;
+            background-color: #f2f2f2;
+            color: #263238;
+            text-align: center;
+            padding: 2.5px;
+            border: solid 1px #f2f2f2;
+            border-radius: 3px;
+        }
+
+        li:hover span {
+            display: block;
+        }
+    </style>
+{% block content %}
+<div class="table-responsive">
+
+    <ul id="sortable1" class="adm_list adm_left connectedSortable" header="In the group">
+    {% for device in device_list_in %}
+        <li class="ui-state-default" id="{{ device.pk }}">{{ device.name }} <span>Just drag and drop</span></li>
+    {% endfor %}
+    </ul>
+
+    <ul id="sortable2" class="adm_list adm_right connectedSortable" header="Outside the group">
+    {% for device in device_list_not_in %}
+        <li class="ui-state-highlight" id="{{ device.pk }}">{{ device.name }} is in {{ device.group.name }}<span>Just drag and drop</span></li>
+    {% endfor %}
+    </ul>
+    <button type="button" pk-group="{{ group_id }}" class="btn btn-success fa fa-floppy-o"></button>
+</div>
+{% endblock %}
+{#{% block modalTitle %}Manage displays in group{% endblock %}#}
+{% block js %}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        var sortable1 = $('#sortable1').children().map(function (p1, p2, p3) {
+            return p2.id
+        }).get();
+        var formAjaxSubmit = function(form, modal) {
+            $(form).submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (xhr, ajaxOptions, thrownError) {
+                        if ( $(xhr).find('.has-error').length > 0 ) {
+                            $(modal).find('.modal-body').html(xhr);
+                            formAjaxSubmit(form, modal);
+                        } else {
+                            $(modal).modal('toggle');
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                    }
+            });
+        });
+        }
+
+        $('.close').click(function () {
+            setTimeout(function(){
+                window.location.reload();
+            }, 100);
+        });
+
+        $('.btn-success').click(function() {
+
+            $.ajax({
+                type: "POST",
+                url: "/core/add-device-to-group/",
+                dataType: 'json',
+                data: {
+
+                    add_device_id: sortable1.toString(),
+                    group_id: $(this).attr("pk-group")
+                },
+                success: function (response) {
+                    console.log(response);
+                    location.reload();
+                }
+            })
+        });
+        $( function() {
+            $("#sortable1, #sortable2").sortable({
+                connectWith: ".connectedSortable",
+                update: function () {
+                    console.log('update');
+                    sortable1 = $('#sortable1').children().map(function (p1, p2, p3) {
+                        return p2.id
+                    }).get();
+                }
+            }).disableSelection();
+        });
+
+    </script>
+{% endblock js %}

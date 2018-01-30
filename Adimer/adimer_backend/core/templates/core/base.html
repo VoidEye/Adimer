@@ -1,0 +1,151 @@
+{% load active_page %}
+{% load staticfiles %}
+<!doctype html>
+<html class="no-js" lang="">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>{% block title %}{% endblock %} :: AdImer</title>
+<meta name="description" content="{% block description %}{% endblock %}">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="{% static 'css/AdImer.css' %}" rel="stylesheet">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script>window.html5 || document.write('<script src="{{ STATIC_URL }}libs/html5shiv.js"><\/script>')</script>
+    <![endif]-->
+</head>
+<body>
+<!--[if lt IE 8]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="nav-side-menu">
+                <div class="brand">AdImer</div>
+                <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+                <div class="menu-list">
+                    <ul id="menu-content" class="menu-content collapse out">
+                        <li><a href="/core/displays"><i class="fa fa-television fa-lg"></i> &nbsp;Displays</a></li>
+                        <li><a href="/core/playlists"><i class="fa fa-th-list fa-lg"></i> &nbsp;Playlists</a></li>
+                        <li><a href="/core/files"><i class="fa fa-files-o fa-lg"></i> &nbsp;Files</a></li>
+                        <li><a href="/core/localizations"><i class="fa fa-map-marker fa-lg"></i> &nbsp;Localizations</a></li>
+                        <li><a href="/core/groups"><i class="fa fa-object-group fa-lg"></i> &nbsp;Groups</a></li>
+                        <li><a href="#"><i class="fa fa-info fa-lg"></i> &nbsp;About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9 col-sm-offset-1">
+            <div class="row buttons-row">
+                <div class="footer col-md-12">
+                    <button title="Add new" type="button" class="btn btn-success fa fa-plus" id="{% block id %}{% endblock id %}"></button>
+                    <button title="Update all active displays" type="button" class="btn-firebase btn btn-primary fa fa-upload "> </button>
+                </div>
+                <div>{% block groupButton %}{% endblock %}</div>
+            </div>
+            <div class="row">
+                <div class="list col-md-12">
+                    {% block content %}{% endblock %}
+                </div>
+                <div class="col-md-6">{% block groupContent %}{% endblock %}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% block modalTitle %}{% endblock %}</h4>
+            </div>
+            <div id="form-modal-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form-modal-edit" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title-edit">{% block modalEditTitle %}{% endblock %}</h4>
+            </div>
+            <div id="form-modal-edit-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form-modal-add" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-add-title">{% block modalAddTitle %}{% endblock %}</h4>
+            </div>
+            <div id="form-modal-add-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form-modal-manage" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-manage-title">{% block modalManageTitle %}{% endblock %}</h4>
+            </div>
+            <div id="form-modal-manage-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form-modal-delete" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-delete-title">{% block modalDeleteTitle %}{% endblock %}</h4>
+            </div>
+            <div id="form-modal-delete-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="form-modal-update" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-update-title">Update all active displays</h4>
+            </div>
+            <div id="form-modal-update-body" class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% block js %}
+{% endblock js %}
+</body>
+</html>
+<script>
+    $('.btn-firebase').click(function() {
+        $('#form-modal-update-body').load('/core/update-devices/', function () {
+            $('#form-modal-update').modal('toggle');
+            formAjaxSubmit('#form-modal-update-body form', '#form-modal-update');
+        });
+    });
+</script>

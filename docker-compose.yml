@@ -1,0 +1,27 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: ngAdImer01
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Adimer/adimer_backend:/app/adimer_backend
+      - ./Adimer/config/nginx:/etc/nginx/conf.d
+    links:
+      - web
+  web:
+    build: ./Adimer
+    container_name: AdImer01
+    command: /app/adimer_backend/start.sh
+    volumes:
+      - ./Adimer/adimer_backend:/app/adimer_backend
+    expose:
+      - "8020"
+    links:
+      - db
+  db:
+    image: postgres:latest
+    container_name: psAdImer01
+    # ports:
+    # - "5432:5432"

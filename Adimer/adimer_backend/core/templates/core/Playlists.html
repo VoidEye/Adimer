@@ -1,0 +1,95 @@
+{% extends 'core/base.html' %}
+{% block content %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <!--<th>#</th>-->
+                <th>Name</th>
+                <th>Duration</th>
+                <th data-formatter="TableActions">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for playlist in list %}
+                <tr>
+                    <!--<td>{{ playlist.pk }}</td>-->
+                    <td>{{ playlist.name }}</td>
+                    <td>{{ playlist.duration }}</td>
+                    <td>
+                        <button type="button" id="slides_edit_{{ playlist.pk }}" data-pk="{{ playlist.pk }}" class="slides_edit btn btn-primary fa fa-file-image-o" aria-hidden="true"></button>
+                        <button type="button" id="playlist_edit_{{ playlist.pk }}" data-pk="{{ playlist.pk }}" class="playlist_edit btn btn-primary fa fa-calendar" aria-hidden="true"></button>
+                        <button type="button" data-pk="{{ playlist.pk }}" class="playlist_delete btn btn-danger fa fa-trash" aria-hidden="true"></button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+{% block modalAddTitle %}Add playlist{% endblock %}
+{% block modalTitle %}Manage playlist{% endblock %}
+{% block modalEditTitle %}Edit playlist{% endblock %}
+{% block modalDeleteTitle %}Delete playlist{% endblock %}
+{% block id %}playlist_add{% endblock %}
+{% block js %}
+    <script>
+        var formAjaxSubmit = function(form, modal) {
+            $(form).submit(function (e) {
+                e.preventDefault();
+                var data = new FormData($('form').get(0));
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: data,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function (xhr, ajaxOptions, thrownError) {
+                        if ( $(xhr).find('.has-error').length > 0 ) {
+                            $(modal).find('.modal-body').html(xhr);
+                            formAjaxSubmit(form, modal);
+                        } else {
+                            $(modal).modal('toggle');
+                            setTimeout(function(){
+                                window.location.reload();
+                            }, 100);
+                        }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                    }
+                });
+            });
+        };
+        $('#playlist_add').click(function() {
+            $('#form-modal-add-body').load('/core/add-playlist/', function () {
+                $('#form-modal-add').modal('toggle');
+                formAjaxSubmit('#form-modal-add-body form', '#form-modal-add');
+            });
+        });
+
+        $('.slides_edit').click(function() {
+            var pk = $(this).attr("data-pk");
+            $('#form-modal-body').load('/core/manage-slides/' + pk, function () {
+                $('#form-modal').modal('toggle');
+            });
+        });
+
+        $('.playlist_edit').click(function() {
+            var pk = $(this).attr("data-pk");
+            $('#form-modal-edit-body').load('/core/edit-playlist/' + pk, function () {
+                $('#form-modal-edit').modal('toggle');
+                formAjaxSubmit('#form-modal-edit-body form', '#form-modal-edit');
+            });
+        });
+
+        $('.playlist_delete').click(function() {
+            var pk = $(this).attr("data-pk");
+            $('#form-modal-delete-body').load('/core/delete-playlist/'+ pk, function () {
+                $('#form-modal-delete').modal('toggle');
+                formAjaxSubmit('#form-modal-delete-body form', '#form-modal-delete');
+            });
+        });
+    </script>
+{% endblock js %}
